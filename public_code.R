@@ -1038,7 +1038,7 @@ female_tem_work<-female_temporary%>%filter(unemploy==0,
   mutate(size = if_else(employ_size %in% c(7, 8), "7", employ_size))
 
 female_tem_work$work_visa <- factor(female_tem_work$work_visa)
-female_tem_work$work_visa <- relevel(female_tem_work$work_visa, ref = "1")
+female_tem_work$work_visa <- relevel(female_tem_work$work_visa, ref = "0")
 design_tem_work_female <- svydesign(id = ~1, data = female_tem_work,weights = ~weight)
 
 tem_satis1_female<- svyglm( satis_sec ~ as.factor(work_visa)+as.factor(work_stem)+
@@ -1060,6 +1060,14 @@ tem_satis1_female<- svyglm( satis_sec ~ as.factor(work_visa)+as.factor(work_stem
                      design = design_tem_work_female)
 
 
+
+
+library(stargazer)
+stargazer(tem_satis1_female,type="text",
+          star.char = c("+", "*", "**", "***"),
+          star.cutoffs = c(.1, .05, .01, .001))
+### ----subgroup----
+# Subset the data for degree_place == 0
 design_work5 <- subset(design_work_female, degree_place == 0)
 lm_place5 <- svyglm(satis_sec ~ as.factor(work_stem)+as.factor(race_new)+
                       age + 
@@ -1072,7 +1080,6 @@ lm_place5 <- svyglm(satis_sec ~ as.factor(work_stem)+as.factor(race_new)+
                       as.factor(year)+as.factor(sector)+as.factor(full_time)+fit+as.factor(size)+
                       
                       as.factor(current_loc_new), design = design_work5, family=gaussian())
-### ----subgroup----
 # Subset the data for degree_place == 1
 design_work6 <- subset(design_work_female, degree_place == 1)
 lm_place6 <- svyglm(satis_sec ~ as.factor(work_stem)+
